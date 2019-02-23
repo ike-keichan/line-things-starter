@@ -9,14 +9,14 @@ const PSDI_SERVICE_UUID         = 'E625601E-9E55-4597-A598-76018A0D293D'; // Dev
 const PSDI_CHARACTERISTIC_UUID  = '26E2B12B-85F0-4F3F-9FDD-91D114270E6E';
 
 // UI settings
-let ledState = false; // true: LED on, false: LED off
-let clickCount = 0;
+let ledState = false; // true: LED on, false: LED off  //LEDのオン・オフ
+let clickCount = 0; //クリックの回数
 
 // -------------- //
 // On window load //
 // -------------- //
 
-window.onload = () => {
+window.onload = () => { //HTML読み込み後に実行
     initializeApp();
 };
 
@@ -24,7 +24,7 @@ window.onload = () => {
 // Handler functions //
 // ----------------- //
 
-function handlerToggleLed() {
+function handlerToggleLed() { 
     ledState = !ledState;
 
     uiToggleLedButton(ledState);
@@ -35,7 +35,7 @@ function handlerToggleLed() {
 // UI functions //
 // ------------ //
 
-function uiToggleLedButton(state) {
+function uiToggleLedButton(state) { //スマホ画面のLEDボタンの処理
     const el = document.getElementById("btn-led-toggle");
     el.innerText = state ? "Switch LED OFF" : "Switch LED ON";
 
@@ -46,14 +46,14 @@ function uiToggleLedButton(state) {
     }
 }
 
-function uiCountPressButton() {
+function uiCountPressButton() { //マイコンのクリック回数のカウント
     clickCount++;
 
     const el = document.getElementById("click-count");
     el.innerText = clickCount;
 }
 
-function uiToggleStateButton(pressed) {
+function uiToggleStateButton(pressed) { //マイコンのクリックの処理
     const el = document.getElementById("btn-state");
 
     if (pressed) {
@@ -104,7 +104,7 @@ function uiToggleLoadingAnimation(isLoading) {
     }
 }
 
-function uiStatusError(message, showLoadingAnimation) {
+function uiStatusError(message, showLoadingAnimation) { //エラー時の処理
     uiToggleLoadingAnimation(showLoadingAnimation);
 
     const elStatus = document.getElementById("status");
@@ -120,7 +120,7 @@ function uiStatusError(message, showLoadingAnimation) {
     elControls.classList.add("hidden");
 }
 
-function makeErrorMsg(errorObj) {
+function makeErrorMsg(errorObj) { //エラーメッセージ
     return "Error\n" + errorObj.code + "\n" + errorObj.message;
 }
 
@@ -128,22 +128,22 @@ function makeErrorMsg(errorObj) {
 // LIFF functions //
 // -------------- //
 
-function initializeApp() {
-    liff.init(() => initializeLiff(), error => uiStatusError(makeErrorMsg(error), false));
+function initializeApp() { //LIFFアプリの初期化
+    liff.init(() => initializeLiff(), error => uiStatusError(makeErrorMsg(error), false)); //エラーの有無を確認
 }
 
-function initializeLiff() {
-    liff.initPlugins(['bluetooth']).then(() => {
+function initializeLiff() { //
+    liff.initPlugins(['bluetooth']).then(() => { //エラーの有無の確認
         liffCheckAvailablityAndDo(() => liffRequestDevice());
     }).catch(error => {
         uiStatusError(makeErrorMsg(error), false);
     });
 }
 
-function liffCheckAvailablityAndDo(callbackIfAvailable) {
+function liffCheckAvailablityAndDo(callbackIfAvailable) { //使用可能なBluetoothか確認
     // Check Bluetooth availability
-    liff.bluetooth.getAvailability().then(isAvailable => {
-        if (isAvailable) {
+    liff.bluetooth.getAvailability().then(isAvailable => { //エラーの有無の確認
+        if (isAvailable) { //エラーの有無の確認
             uiToggleDeviceConnected(false);
             callbackIfAvailable();
         } else {
@@ -155,15 +155,15 @@ function liffCheckAvailablityAndDo(callbackIfAvailable) {
     });;
 }
 
-function liffRequestDevice() {
-    liff.bluetooth.requestDevice().then(device => {
+function liffRequestDevice() { //LINE Things対応デバイスのスキャン
+    liff.bluetooth.requestDevice().then(device => { //エラーの有無の確認
         liffConnectToDevice(device);
     }).catch(error => {
         uiStatusError(makeErrorMsg(error), false);
     });
 }
 
-function liffConnectToDevice(device) {
+function liffConnectToDevice(device) { 
     device.gatt.connect().then(() => {
         document.getElementById("device-name").innerText = device.name;
         document.getElementById("device-id").innerText = device.id;
@@ -207,7 +207,7 @@ function liffConnectToDevice(device) {
     });
 }
 
-function liffGetUserService(service) {
+function liffGetUserService(service) { //繋いだユーザの情報を取得
     // Button pressed state
     service.getCharacteristic(BTN_CHARACTERISTIC_UUID).then(characteristic => {
         liffGetButtonStateCharacteristic(characteristic);
